@@ -71,21 +71,19 @@ namespace MysticsRisky2Utils
                 }
             };
 
-            IL.RoR2.HealthComponent.TakeDamage += (il) =>
+            IL.RoR2.HealthComponent.TakeDamageProcess += (il) =>
             {
                 ILCursor c = new ILCursor(il);
                 int bypassArmorFlagPosition = 5;
-                int damagePosition = 6;
-                int executionThresholdPosition = 53;
-                int executionEffectPosition = 10;
-                int forceExecutionPosition = 8;
+                int damagePosition = 7;
+                int executionThresholdPosition = 59;
+                int executionEffectPosition = 11;
+                int forceExecutionPosition = 9;
                 if (c.TryGotoNext(
                     MoveType.AfterLabel,
                     x => x.MatchLdarg(1),
                     x => x.MatchLdfld<DamageInfo>("damageType"),
-                    x => x.MatchLdcI4(2),
-                    x => x.MatchAnd(),
-                    x => x.MatchLdcI4(0),
+                    x => x.MatchLdcI4(2)) && c.TryGotoNext(
                     x => x.MatchCgtUn(),
                     x => x.MatchStloc(out bypassArmorFlagPosition)
                 ) && c.TryGotoNext(
@@ -231,21 +229,18 @@ namespace MysticsRisky2Utils
             IL.RoR2.SceneDirector.PopulateScene += (il) =>
             {
                 ILCursor c = new ILCursor(il);
-
-                ILLabel label = null;
                 int rngPos = -1;
 
                 if (c.TryGotoNext(
                     x => x.MatchCallOrCallvirt<SceneInfo>("get_instance"),
-                    x => x.MatchCallOrCallvirt<SceneInfo>("get_countsAsStage"),
-                    x => x.MatchBrfalse(out label)
+                    x => x.MatchCallOrCallvirt<SceneInfo>("get_countsAsStage")
                 ) && c.TryGotoNext(
                     x => x.MatchLdfld<SceneDirector>("rng")
                 ) && c.TryGotoNext(
+                    MoveType.After,
                     x => x.MatchStloc(out rngPos)
                 ))
                 {
-                    c.GotoLabel(label);
                     c.Emit(OpCodes.Ldloc, rngPos);
                     c.EmitDelegate<System.Action<Xoroshiro128Plus>>((xoroshiro128Plus) =>
                     {

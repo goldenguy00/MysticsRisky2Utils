@@ -1,7 +1,7 @@
 {
-  "name": "MysticsRisky2Utils",
-  "version_number": "2.0.15",
-  "website_url": "https://github.com/TheMysticSword/MysticsRisky2Utils",
+  "name": "RealerMysticsRisky2Utils",
+  "version_number": "2.0.16",
+  "website_url": "https://github.com/prodzpod/MysticsRisky2Utils",
   "description": "Library for TheMysticSword's mods",
   "dependencies": [
     "bbepis-BepInExPack-5.4.1905",

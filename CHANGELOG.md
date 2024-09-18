@@ -1,3 +1,5 @@
+#### 2.0.16
+* fixes for SotS
 #### 2.0.15:
 * Fixed this mod breaking Starstorm 2's Fear execution
 #### 2.0.14:
