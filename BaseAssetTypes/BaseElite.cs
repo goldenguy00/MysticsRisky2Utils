@@ -164,7 +164,7 @@ namespace MysticsRisky2Utils.BaseAssetTypes
                         HG.ArrayUtils.ArrayAppend(ref R2API.EliteAPI.VanillaEliteTiers[1].eliteTypes, customElite.eliteDef);
                         break;
                     case 2:
-                        HG.ArrayUtils.ArrayAppend(ref R2API.EliteAPI.VanillaEliteTiers[3].eliteTypes, customElite.eliteDef);
+                        HG.ArrayUtils.ArrayAppend(ref R2API.EliteAPI.VanillaEliteTiers[4].eliteTypes, customElite.eliteDef);
                         break;
                 }
                 if (customElite.isHonor)
