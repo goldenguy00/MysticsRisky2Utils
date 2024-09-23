@@ -2,6 +2,7 @@ using RoR2;
 using UnityEngine;
 using System.Collections.Generic;
 using MysticsRisky2Utils.ContentManagement;
+using System;
 
 namespace MysticsRisky2Utils.BaseAssetTypes
 {
@@ -15,7 +16,7 @@ namespace MysticsRisky2Utils.BaseAssetTypes
             {
                 return _refreshable;
             }
-            set
+                set
             {
                 if (_refreshable == value) return;
                 _refreshable = value;
@@ -31,6 +32,8 @@ namespace MysticsRisky2Utils.BaseAssetTypes
         {
             buffDef = ScriptableObject.CreateInstance<BuffDef>();
             OnLoad();
+            var spr = LoadSprite(buffDef.name);
+            if (spr != null) buffDef.iconSprite = spr;
             asset = buffDef;
         }
 
@@ -58,5 +61,9 @@ namespace MysticsRisky2Utils.BaseAssetTypes
                 }
             }
         }
+
+        [Obsolete("compat layer for EliteVariety. dont use this")]
+        public virtual Sprite? LoadSprite(string assetName) { return null; }
+
     }
 }

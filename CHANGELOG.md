@@ -1,3 +1,5 @@
+#### 2.0.18
+* compat layer for elitevariety
 #### 2.0.17
 * fixed Tier 2 elites becoming Tier 1.5(gilded-type) elites (sots issue)
 #### 2.0.16

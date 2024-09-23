@@ -129,6 +129,7 @@ namespace MysticsRisky2Utils.BaseAssetTypes
                 localAngles = localAngles,
                 localScale = localScale
             });
+            perItemDisplayRules[keyAsset] = displayRulesForThisItem;
         }
 
         public abstract UnlockableDef GetUnlockableDef();

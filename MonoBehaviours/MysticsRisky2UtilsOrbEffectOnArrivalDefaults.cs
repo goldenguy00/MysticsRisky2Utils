@@ -16,15 +16,9 @@ namespace MysticsRisky2Utils.MonoBehaviours
 			if (orbEffect)
 			{
 				orbEffect.onArrival.AddListener(() =>
-				{
-					foreach (Transform transform in transformsToUnparentChildren)
-					{
-						transform.DetachChildren();
-					}
-					foreach (MonoBehaviour monoBehaviour in componentsToEnable)
-                    {
-						monoBehaviour.enabled = true;
-					}
+                {
+					foreach (Transform transform in transformsToUnparentChildren) transform?.DetachChildren();
+					foreach (MonoBehaviour monoBehaviour in componentsToEnable) monoBehaviour.enabled = true;
 				});
 			}
 		}

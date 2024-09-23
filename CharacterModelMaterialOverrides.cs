@@ -48,10 +48,7 @@ namespace MysticsRisky2Utils
                         return material;
                     });
                     c.Emit(OpCodes.Stloc, 0);
-                    c.EmitDelegate<System.Func<bool>>(() =>
-                    {
-                        return ignoreOverlays2;
-                    });
+                    c.EmitDelegate<System.Func<bool>>(() => ignoreOverlays2);
                     c.Emit(OpCodes.Starg, ignoreOverlaysPos);
                 }
             };
