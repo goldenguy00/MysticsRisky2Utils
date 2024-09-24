@@ -1,4 +1,6 @@
 using RoR2.Orbs;
+using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace MysticsRisky2Utils.MonoBehaviours
@@ -15,12 +17,16 @@ namespace MysticsRisky2Utils.MonoBehaviours
 			if (componentsToEnable == null) componentsToEnable = new MonoBehaviour[] { };
 			if (orbEffect)
 			{
-				orbEffect.onArrival.AddListener(() =>
-                {
-					foreach (Transform transform in transformsToUnparentChildren) transform?.DetachChildren();
-					foreach (MonoBehaviour monoBehaviour in componentsToEnable) monoBehaviour.enabled = true;
-				});
+				orbEffect.onArrival.AddListener(() => OnArrival());
 			}
 		}
+
+		public IEnumerator OnArrival()
+        {
+			for (int i = 0; i < 1; i = 1) yield return new WaitForEndOfFrame();
+            foreach (Transform transform in transformsToUnparentChildren) transform?.DetachChildren();
+            foreach (MonoBehaviour monoBehaviour in componentsToEnable) if (monoBehaviour != null) monoBehaviour.enabled = true;
+			yield break;
+        }
 	}
 }
