@@ -1,3 +1,5 @@
+#### 2.0.20
+* all elites should be properly disabled on config
 #### 2.0.19
 * hopefully fixed the nre spam
 #### 2.0.18

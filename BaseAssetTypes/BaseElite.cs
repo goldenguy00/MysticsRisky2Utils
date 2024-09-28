@@ -37,7 +37,11 @@ namespace MysticsRisky2Utils.BaseAssetTypes
         internal static void Init()
         {
             On.RoR2.EliteCatalog.Init += EliteCatalog_Init;
-
+            On.RoR2.EliteDef.IsAvailable += (orig, self) =>
+            {
+                if (self.eliteEquipmentDef == null) return false;
+                return orig(self);
+            };
             On.RoR2.CharacterModel.UpdateLights += CharacterModel_UpdateLights;
             On.RoR2.CharacterModel.OnDestroy += CharacterModel_OnDestroy;
 
