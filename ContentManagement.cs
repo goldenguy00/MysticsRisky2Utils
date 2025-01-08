@@ -140,7 +140,8 @@ namespace MysticsRisky2Utils.ContentManagement
                 {
                     if (!sorted)
                     {
-                        loadedAssets.Sort((x, y) => {
+                        loadedAssets.Sort((x, y) =>
+                        {
                             Object xObject = x as Object;
                             Object yObject = y as Object;
                             return string.Compare(xObject != null ? xObject.name : (x != null ? x.GetType().Name : ""), yObject != null ? yObject.name : (y != null ? y.GetType().Name : ""), System.StringComparison.OrdinalIgnoreCase);
@@ -172,7 +173,7 @@ namespace MysticsRisky2Utils.ContentManagement
             asset = this;
             OnLoad();
         }
-        
+
         private static Dictionary<System.Type, BaseLoadableAsset> staticAssetDictionary = new Dictionary<System.Type, BaseLoadableAsset>();
 
         internal static BaseLoadableAsset Get(System.Type type)

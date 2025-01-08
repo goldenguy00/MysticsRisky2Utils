@@ -16,7 +16,7 @@ namespace MysticsRisky2Utils.BaseAssetTypes
             {
                 return _refreshable;
             }
-                set
+            set
             {
                 if (_refreshable == value) return;
                 _refreshable = value;

@@ -90,7 +90,8 @@ namespace MysticsRisky2Utils.BaseAssetTypes
                         }
                     }
                 );
-            } else
+            }
+            else
             {
                 MysticsRisky2UtilsPlugin.logger.LogWarning("Failed to add custom elites to ScriptedCombatEncounter's Artifact of Honor elite list. Alloy Worship Unit, Aurelionite and other scripted combat encounter enemies cannot become custom elites.");
                 MysticsRisky2UtilsPlugin.logger.LogWarning("(for TheMysticSword: ScriptedCombatEncounter HandleSpawn method was changed)");

@@ -149,7 +149,7 @@ namespace MysticsRisky2Utils
         {
             public CharacterBody characterBody;
             public Dictionary<GameObject, MysticsRisky2UtilsTempVFX> dictionary = new Dictionary<GameObject, MysticsRisky2UtilsTempVFX>();
-            
+
             public void Awake()
             {
                 characterBody = GetComponent<CharacterBody>();

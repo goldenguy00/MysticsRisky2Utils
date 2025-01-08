@@ -61,20 +61,20 @@ namespace MysticsRisky2Utils
                 AddStatModifier(info, critModifiers, ref args.critAdd);
                 AddStatModifier(info, armorModifiers, ref args.armorAdd);
                 foreach (var m in rootMovementModifiers) if (m.shouldApply(info))
-                {
-                    self.moveSpeed = 0f;
-                    self.acceleration = 80f;
-                }
+                    {
+                        self.moveSpeed = 0f;
+                        self.acceleration = 80f;
+                    }
             };
         }
 
         public static void AddStatModifier(GenericCharacterInfo info, List<StatModifier> list, ref float flat, ref float mult)
         {
             foreach (var m in list) if (m.times(info) != 0)
-            {
-                if (m.flat != 0) flat += m.flat * m.times(info);
-                if (m.multiplier != 0) mult += m.multiplier * m.times(info);
-            }
+                {
+                    if (m.flat != 0) flat += m.flat * m.times(info);
+                    if (m.multiplier != 0) mult += m.multiplier * m.times(info);
+                }
         }
 
         public static void AddStatModifier(GenericCharacterInfo info, List<FlatStatModifier> list, ref float flat)

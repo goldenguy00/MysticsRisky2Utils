@@ -48,7 +48,7 @@ namespace MysticsRisky2Utils
                 }
                 HopooShaderToMaterial.Apply(mat, shader, properties);
             }
-            
+
             public static void DisableEverything(Material mat)
             {
                 mat.DisableKeyword("DITHER");

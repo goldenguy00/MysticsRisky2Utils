@@ -41,24 +41,9 @@ namespace MysticsRisky2Utils
         }
         internal static void Init()
         {
-            On.RoR2.HealthComponent.Awake += (orig, self) =>
-            {
-                self.gameObject.AddComponent<MysticsRisky2UtilsDamageEvents>();
-                orig(self);
-            };
+            On.RoR2.HealthComponent.Awake += HealthComponent_Awake;
 
-            On.RoR2.GlobalEventManager.OnHitEnemy += (orig, self, damageInfo, victim) =>
-            {
-                orig(self, damageInfo, victim);
-                if (damageInfo.attacker)
-                {
-                    CharacterBody attackerBody = damageInfo.attacker.GetComponent<CharacterBody>();
-                    CharacterBody victimBody = victim ? victim.GetComponent<CharacterBody>() : null;
-                    GenericCharacterInfo attackerInfo = new GenericCharacterInfo(attackerBody);
-                    GenericCharacterInfo victimInfo = new GenericCharacterInfo(victimBody);
-                    if (OnHitEnemy != null) OnHitEnemy(damageInfo, attackerInfo, victimInfo);
-                }
-            };
+            On.RoR2.GlobalEventManager.OnHitEnemy += GlobalEventManager_OnHitEnemy; ;
 
             On.RoR2.GlobalEventManager.OnHitAll += (orig, self, damageInfo, hitObject) =>
             {
@@ -79,26 +64,25 @@ namespace MysticsRisky2Utils
                 int executionThresholdPosition = 59;
                 int executionEffectPosition = 11;
                 int forceExecutionPosition = 9;
-                if (c.TryGotoNext(
-                    MoveType.AfterLabel,
-                    x => x.MatchLdarg(1),
-                    x => x.MatchLdfld<DamageInfo>("damageType"),
-                    x => x.MatchLdcI4(2)) && c.TryGotoNext(
-                    x => x.MatchCgtUn(),
-                    x => x.MatchStloc(out bypassArmorFlagPosition)
-                ) && c.TryGotoNext(
-                    MoveType.AfterLabel,
-                    x => x.MatchLdarg(1),
-                    x => x.MatchLdfld<DamageInfo>("damage"),
-                    x => x.MatchStloc(out damagePosition)
-                ))
-                {
-                    if (c.TryGotoNext(
-                        MoveType.AfterLabel,
+                if (c.TryGotoNext(MoveType.After,
                         x => x.MatchLdarg(1),
-                        x => x.MatchLdfld<DamageInfo>("crit"),
-                        x => x.MatchBrfalse(out _)
+                        x => x.MatchLdfld(out _),
+                        x => x.MatchLdfld<DamageInfo>("damageType"),
+                        x => x.MatchLdcI4(2)) &&
+                    c.TryGotoNext(
+                        x => x.MatchCgtUn(),
+                        x => x.MatchStloc(out bypassArmorFlagPosition)) &&
+                    c.TryGotoNext(MoveType.AfterLabel,
+                        x => x.MatchLdarg(1),
+                        x => x.MatchLdfld<DamageInfo>("damage"),
+                        x => x.MatchStloc(out damagePosition)
                     ))
+                {
+                    if (c.TryGotoNext(MoveType.AfterLabel,
+                            x => x.MatchLdarg(1),
+                            x => x.MatchLdfld<DamageInfo>("crit"),
+                            x => x.MatchBrfalse(out _)
+                        ))
                     {
                         c.Emit(OpCodes.Ldarg_0);
                         c.Emit(OpCodes.Ldarg_1);
@@ -115,11 +99,11 @@ namespace MysticsRisky2Utils
                         c.Emit(OpCodes.Stloc, damagePosition);
                     }
                     else ErrorHookFailed("on apply damage increase modifiers");
-                    if (c.TryGotoNext(
-                        MoveType.After,
-                        x => x.MatchLdloc(bypassArmorFlagPosition),
-                        x => x.MatchBrtrue(out _)
-                    ))
+
+                    if (c.TryGotoNext(MoveType.After,
+                            x => x.MatchLdloc(bypassArmorFlagPosition),
+                            x => x.MatchBrtrue(out _)
+                        ))
                     {
                         c.Emit(OpCodes.Ldarg_0);
                         c.Emit(OpCodes.Ldarg_1);
@@ -136,19 +120,18 @@ namespace MysticsRisky2Utils
                         c.Emit(OpCodes.Stloc, damagePosition);
                     }
                     else ErrorHookFailed("on apply damage reduction modifiers");
-                    if (c.TryGotoNext(
-                        MoveType.After,
-                        x => x.MatchLdarg(0),
-                        x => x.MatchCallOrCallvirt<HealthComponent>("get_fullHealth"),
-                        x => x.MatchLdcR4(0.1f),
-                        x => x.MatchMul(),
-                        x => x.MatchStloc(damagePosition)
-                    ) && c.TryGotoPrev(
-                        MoveType.AfterLabel,
-                        x => x.MatchLdarg(0),
-                        x => x.MatchLdfld<HealthComponent>("body"),
-                        x => x.MatchLdsfld(typeof(RoR2Content.Buffs), "LunarShell")
-                    ))
+
+                    if (c.TryGotoNext(MoveType.After,
+                            x => x.MatchLdarg(0),
+                            x => x.MatchCallOrCallvirt<HealthComponent>("get_fullHealth"),
+                            x => x.MatchLdcR4(0.1f),
+                            x => x.MatchMul(),
+                            x => x.MatchStloc(damagePosition)) &&
+                        c.TryGotoPrev(MoveType.AfterLabel,
+                            x => x.MatchLdarg(0),
+                            x => x.MatchLdfld<HealthComponent>("body"),
+                            x => x.MatchLdsfld(typeof(RoR2Content.Buffs), "LunarShell")
+                        ))
                     {
                         c.Emit(OpCodes.Ldarg_0);
                         c.Emit(OpCodes.Ldarg_1);
@@ -165,32 +148,26 @@ namespace MysticsRisky2Utils
                         c.Emit(OpCodes.Stloc, damagePosition);
                     }
                     else ErrorHookFailed("on apply damage cap modifiers");
-                    if (c.TryGotoNext(
-                        MoveType.After,
-                        x => x.MatchLdfld<CharacterBody>("bodyFlags"),
-                        x => x.MatchLdcI4((int)CharacterBody.BodyFlags.ImmuneToExecutes)
-                    ) && c.TryGotoPrev(
-                        MoveType.After,
-                        x => x.MatchLdfld<CharacterBody>("bodyFlags"),
-                        x => x.MatchLdcI4((int)CharacterBody.BodyFlags.ImmuneToVoidDeath)
-                    ) && c.TryGotoNext(
-                        MoveType.After,
-                        x => x.MatchStloc(out forceExecutionPosition)
-                    ) && c.TryGotoNext(
-                        MoveType.After,
-                        x => x.MatchLdcR4(float.NegativeInfinity),
-                        x => x.MatchStloc(out executionThresholdPosition)
-                    ) && c.TryGotoNext(
-                        MoveType.After,
-                        x => x.MatchLdsfld<EntityStates.FrozenState>("executeEffectPrefab"),
-                        x => x.MatchStloc(out executionEffectPosition)
-                    ) && c.TryGotoPrev(
-                        MoveType.After,
-                        x => x.MatchCallOrCallvirt<HealthComponent>("get_isInFrozenState")
-                    ) && c.TryGotoPrev(
-                        MoveType.Before,
-                        x => x.MatchLdarg(0)
-                    ))
+
+                    if (c.TryGotoNext(MoveType.After,
+                            x => x.MatchLdfld<CharacterBody>("bodyFlags"),
+                            x => x.MatchLdcI4((int)CharacterBody.BodyFlags.ImmuneToExecutes)) &&
+                        c.TryGotoPrev(MoveType.After,
+                            x => x.MatchLdfld<CharacterBody>("bodyFlags"),
+                            x => x.MatchLdcI4((int)CharacterBody.BodyFlags.ImmuneToVoidDeath)) &&
+                        c.TryGotoNext(MoveType.After,
+                            x => x.MatchStloc(out forceExecutionPosition)) &&
+                        c.TryGotoNext(MoveType.After,
+                            x => x.MatchLdcR4(float.NegativeInfinity),
+                            x => x.MatchStloc(out executionThresholdPosition)) &&
+                        c.TryGotoNext(MoveType.After,
+                            x => x.MatchLdsfld<EntityStates.FrozenState>("executeEffectPrefab"),
+                            x => x.MatchStloc(out executionEffectPosition)) &&
+                        c.TryGotoPrev(MoveType.After,
+                            x => x.MatchCallOrCallvirt<HealthComponent>("get_isInFrozenState")) &&
+                        c.TryGotoPrev(MoveType.Before,
+                            x => x.MatchLdarg(0)
+                        ))
                     {
                         c.MoveAfterLabels();
                         c.Emit(OpCodes.Ldarg_0);
@@ -214,11 +191,11 @@ namespace MysticsRisky2Utils
                             GenericCharacterInfo victimInfo = new GenericCharacterInfo(victimBody);
                             if (OnApplyDamageExecutions != null) OnApplyDamageExecutions(damageInfo, attackerInfo, victimInfo, damage, ref executionThreshold, ref executionEffectPrefab, ref forceExecution);
                         });
-                        c.EmitDelegate<System.Func<float>>(() => newExecutionThreshold);
+                        c.EmitDelegate(() => newExecutionThreshold);
                         c.Emit(OpCodes.Stloc, executionThresholdPosition);
-                        c.EmitDelegate<System.Func<GameObject>>(() => newExecutionEffectPrefab);
+                        c.EmitDelegate(() => newExecutionEffectPrefab);
                         c.Emit(OpCodes.Stloc, executionEffectPosition);
-                        c.EmitDelegate<System.Func<bool>>(() => newForceExecution);
+                        c.EmitDelegate(() => newForceExecution);
                         c.Emit(OpCodes.Stloc, forceExecutionPosition);
                     }
                     else ErrorHookFailed("on apply damage executions");
@@ -289,33 +266,27 @@ namespace MysticsRisky2Utils
             };
         }
 
-        public class MysticsRisky2UtilsDamageEvents : MonoBehaviour, IOnIncomingDamageServerReceiver, IOnTakeDamageServerReceiver
+        private static void GlobalEventManager_OnHitEnemy(On.RoR2.GlobalEventManager.orig_OnHitEnemy orig, GlobalEventManager self, DamageInfo damageInfo, GameObject victim)
         {
-            public HealthComponent healthComponent;
-            public CharacterBody victimBody;
+            orig(self, damageInfo, victim);
 
-            public void Start()
+            if (OnHitEnemy != null && damageInfo.attacker)
             {
-                healthComponent = GetComponent<HealthComponent>();
-                if (!healthComponent) {
-                    Object.Destroy(this);
-                    return;
-                }
-                victimBody = healthComponent.body;
-            }
-
-            public void OnIncomingDamageServer(DamageInfo damageInfo)
-            {
-                GenericCharacterInfo attackerInfo = new GenericCharacterInfo();
-                if (damageInfo.attacker) attackerInfo = new GenericCharacterInfo(damageInfo.attacker.GetComponent<CharacterBody>());
+                CharacterBody attackerBody = damageInfo.attacker.GetComponent<CharacterBody>();
+                CharacterBody victimBody = victim ? victim.GetComponent<CharacterBody>() : null;
+                GenericCharacterInfo attackerInfo = new GenericCharacterInfo(attackerBody);
                 GenericCharacterInfo victimInfo = new GenericCharacterInfo(victimBody);
-                if (BeforeTakeDamage != null) BeforeTakeDamage(damageInfo, attackerInfo, victimInfo);
-            }
 
-            public void OnTakeDamageServer(DamageReport damageReport)
-            {
-                if (victimBody && OnTakeDamage != null) OnTakeDamage(damageReport);
+                OnHitEnemy.Invoke(damageInfo, attackerInfo, victimInfo);
             }
+        }
+
+        private static void HealthComponent_Awake(On.RoR2.HealthComponent.orig_Awake orig, HealthComponent self)
+        {   
+            if (self)
+                self.gameObject.AddComponent<MysticsRisky2UtilsDamageEvents>();
+
+            orig(self);
         }
     }
 }

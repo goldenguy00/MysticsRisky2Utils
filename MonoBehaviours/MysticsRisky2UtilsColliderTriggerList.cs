@@ -24,7 +24,7 @@ namespace MysticsRisky2Utils.MonoBehaviours
         {
             return RetrieveList().Select(x => x.GetComponent<CharacterBody>()).Where(x => x != null).Distinct().ToList();
         }
-        
+
         public void OnTriggerEnter(Collider other)
         {
             list.Add(other);

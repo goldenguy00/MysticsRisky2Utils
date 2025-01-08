@@ -171,7 +171,7 @@ namespace MysticsRisky2Utils
         public static Sprite AddItemIconBackgroundToSprite(Sprite originalSprite, ItemIconBackgroundType bgType)
         {
             Texture2D loadedOriginalTexture = originalSprite.texture;
-            
+
             Texture2D originalTexture = new Texture2D(loadedOriginalTexture.width, loadedOriginalTexture.height, TextureFormat.ARGB32, false);
             Graphics.ConvertTexture(loadedOriginalTexture, originalTexture);
             RenderTexture renderTexture = RenderTexture.GetTemporary(originalTexture.width, originalTexture.height, 24, RenderTextureFormat.ARGB32);

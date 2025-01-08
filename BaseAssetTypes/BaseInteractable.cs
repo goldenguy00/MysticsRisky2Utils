@@ -211,7 +211,8 @@ namespace MysticsRisky2Utils.BaseAssetTypes
                                 DirectorCardCategorySelection.Category category = dccs.categories[i];
                                 if (categoryCards.ContainsKey(category.name))
                                 {
-                                    foreach (DirectorCard directorCard in categoryCards[category.name]) {
+                                    foreach (DirectorCard directorCard in categoryCards[category.name])
+                                    {
                                         dccs.AddCard(i, directorCard);
                                     }
                                 }

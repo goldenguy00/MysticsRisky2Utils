@@ -32,7 +32,7 @@ namespace MysticsRisky2Utils.BaseAssetTypes
         /// </summary>
         public Dictionary<string, GameObject> itemDisplayPrefabs = new Dictionary<string, GameObject>();
         public static event System.Action onSetupIDRS;
-        
+
         public GameObject PrepareModel(GameObject model)
         {
             model.AddComponent<MysticsRisky2UtilsItemFollowerVisualScaling>();
@@ -90,7 +90,7 @@ namespace MysticsRisky2Utils.BaseAssetTypes
         }
 
         public static Dictionary<string, Dictionary<object, List<ItemDisplayRule>>> perBodyDisplayRules = new Dictionary<string, Dictionary<object, List<ItemDisplayRule>>>();
-        
+
         public virtual void AddDisplayRule(string bodyName, string childName, Vector3 localPos, Vector3 localAngles, Vector3 localScale)
         {
             AddDisplayRule(bodyName, itemDisplayPrefab, childName, localPos, localAngles, localScale);
@@ -213,7 +213,8 @@ namespace MysticsRisky2Utils.BaseAssetTypes
 
             public static Material GetBestMaterial(List<CharacterModel.RendererInfo> rendererInfos)
             {
-                rendererInfos.Sort((x, y) => {
+                rendererInfos.Sort((x, y) =>
+                {
                     Shader shaderX = x.defaultMaterial.shader;
                     Shader shaderY = y.defaultMaterial.shader;
                     if (shaderX == HopooShaderToMaterial.Standard.shader && shaderY != HopooShaderToMaterial.Standard.shader) return -1;
